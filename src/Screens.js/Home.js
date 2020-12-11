@@ -91,10 +91,16 @@ export default function Home() {
                 <View style={{flex: 1}}>
                   <Text>FullNAme : {item.fullName} </Text>
                   <Text>
-                    Registred day {JSON.stringify(item.dateOfRegistration)}
+                    Registred day
+                    {JSON.stringify(
+                      moment(item.dateOfRegistration).format('DD MMMM YYYY'),
+                    )}
                   </Text>
                   <Text>
-                    End Date : {JSON.stringify(item.endOfRegistration)}
+                    End Date :
+                    {JSON.stringify(
+                      moment(item.endOfRegistration).format('DD MMMM YYYY'),
+                    )}
                   </Text>
                   <Text>
                     Active since : {moment(item.dateOfRegistration).fromNow()}
