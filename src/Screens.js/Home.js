@@ -8,6 +8,7 @@ import {
   Switch,
   TouchableOpacity,
   Image,
+  Modal,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {uniqueid} from '../utility/uniqueid';
@@ -15,6 +16,7 @@ import moment from 'moment';
 import DatePicker from 'react-native-date-picker';
 import {Picker} from '@react-native-picker/picker';
 import ImagePicker, {launchCamera} from 'react-native-image-picker';
+import QRCode from 'react-native-qrcode-svg';
 
 export default function Home() {
   // CONST
@@ -51,7 +53,8 @@ export default function Home() {
 
   // console.log(moment().add(30, 'days').calendar());
   // console.log(moment().calendar());
-
+  const [newMemeberQRcodeData, setnewMemeberQRcodeData] = useState('');
+  const [qrCodeModal, setqrCodeModal] = useState(false);
   // FUNCTIONS
   function addNewMember(name) {
     // checkIfMebeAlreadyexist ?
@@ -85,6 +88,14 @@ export default function Home() {
         });
         // success :
         setmemeberName('');
+        setnewMemeberQRcodeData({
+          fullName: name,
+          dateOfRegistration: personalizedDate ? date : moment(),
+          endOfRegistration: personalizedDate
+            ? moment(date).add(memberShipDurationPerDAys, 'days')
+            : moment().add(memberShipDurationPerDAys, 'days'),
+        });
+        setqrCodeModal(true);
 
         break;
 
@@ -93,12 +104,66 @@ export default function Home() {
         break;
     }
   }
+
+  const memberExmple = {
+    dateOfRegistration: '2020-12-11T19:15:57.271Z',
+    endOfRegistration: '2021-01-10T19:15:57.271Z',
+    fullName: 'mimo',
+    memberShipDuration: 30,
+    memberShipPer: 'days',
+  };
+
   return (
     <View style={{}}>
+      <Modal transparent visible={qrCodeModal}>
+        <View
+          style={{
+            backgroundColor: 'black',
+            height: '100%',
+            width: '100%',
+            position: 'absolute',
+            opacity: 0.5,
+          }}
+        />
+        <View
+          style={{
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '100%',
+            margin: 20,
+          }}>
+          <View
+            style={{
+              backgroundColor: 'white',
+              alignItems: 'center',
+              padding: 20,
+              borderRadius: 25,
+            }}>
+            <TouchableOpacity
+              style={{alignSelf: 'flex-end'}}
+              onPress={() => {
+                console.log('close');
+                setqrCodeModal(false);
+              }}>
+              <Text style={{color: 'red'}}>CLOSE</Text>
+            </TouchableOpacity>
+            <View style={{marginVertical: 20}}>
+              <QRCode value={JSON.stringify(newMemeberQRcodeData)} />
+            </View>
+            <View>
+              <Text>
+                SCAN THIS QRCOED FROM CLIENT APP VESION TO STAY UPDATED FROM
+                YOUR PHONE
+              </Text>
+            </View>
+          </View>
+        </View>
+      </Modal>
       <Image
         source={avatarSource}
         style={{width: 50, height: 50, margin: 10}}
       />
+
       <Text>member info : </Text>
       <TouchableOpacity
         style={{backgroundColor: 'green', margin: 10, padding: 10}}
