@@ -15,8 +15,10 @@ import {uniqueid} from '../utility/uniqueid';
 import moment from 'moment';
 import DatePicker from 'react-native-date-picker';
 import {Picker} from '@react-native-picker/picker';
-import ImagePicker, {launchCamera} from 'react-native-image-picker';
+import {launchCamera} from 'react-native-image-picker';
 import QRCode from 'react-native-qrcode-svg';
+import RNSmtpMailer from 'react-native-smtp-mailer';
+import {mailInfo} from '../utility/smtpCredential';
 
 export default function Home() {
   // CONST
@@ -53,8 +55,17 @@ export default function Home() {
 
   // console.log(moment().add(30, 'days').calendar());
   // console.log(moment().calendar());
-  const [newMemeberQRcodeData, setnewMemeberQRcodeData] = useState('');
-  const [qrCodeModal, setqrCodeModal] = useState(false);
+  const memberExmple = {
+    dateOfRegistration: '2020-12-11T19:15:57.271Z',
+    endOfRegistration: '2021-01-10T19:15:57.271Z',
+    fullName: 'mimo',
+    memberShipDuration: 30,
+    memberShipPer: 'days',
+  };
+  const [newMemeberQRcodeData, setnewMemeberQRcodeData] = useState(
+    memberExmple,
+  );
+  const [qrCodeModal, setqrCodeModal] = useState(true);
   // FUNCTIONS
   function addNewMember(name) {
     // checkIfMebeAlreadyexist ?
@@ -105,13 +116,36 @@ export default function Home() {
     }
   }
 
-  const memberExmple = {
-    dateOfRegistration: '2020-12-11T19:15:57.271Z',
-    endOfRegistration: '2021-01-10T19:15:57.271Z',
-    fullName: 'mimo',
-    memberShipDuration: 30,
-    memberShipPer: 'days',
-  };
+  function sendInvitaionMail(mail) {
+    console.log(mailInfo.email + mailInfo.password);
+    console.log(mail);
+    RNSmtpMailer.sendMail({
+      mailhost: 'smtp.gmail.com',
+      port: '587',
+      ssl: true, // optional. if false, then TLS is enabled. Its true by default in android. In iOS TLS/SSL is determined automatically, and this field doesn't affect anything
+      username: mailInfo.email,
+      password: mailInfo.password,
+      recipients: mail,
+      subject: 'Gym membership registration',
+      htmlBody:
+        '<h1>welcome ' +
+        memeberName +
+        ' to the gym</h1><p>You have successfully subscribed to the gym.' +
+        'You can scan the following code to see how long you have left in the subscription period' +
+        ' by using /<a title="Customer application version" href="https://lh3.googleusercontent.com/proxy/F2uQ-hD4QG5lw95pZ21DLixhhad8ApSFn1D5IhsJ1DUcEO5B9RLODlmAZNL5SszHAwUI6xiZn1JntY3np-6ap9Fx" target="_blank" rel="noopener">Customer application version</a>  </p>' +
+        'QR CODE CONETNT : ' +
+        JSON.stringify(newMemeberQRcodeData) +
+        '<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/QR_code_for_mobile_English_Wikipedia.svg/1200px-QR_code_for_mobile_English_Wikipedia.svg.png" alt="W3Schools" width="200" height="&quot;200" border="0" /></p>',
+      attachmentNames: [],
+    })
+      .then((success) => {
+        if (success.status === 'SUCCESS') {
+          console.log('mail was sent succesfully to : ' + mail);
+          setqrCodeModal(false);
+        }
+      })
+      .catch((err) => alert(err));
+  }
 
   return (
     <View style={{}}>
@@ -155,6 +189,19 @@ export default function Home() {
                 SCAN THIS QRCOED FROM CLIENT APP VESION TO STAY UPDATED FROM
                 YOUR PHONE
               </Text>
+              <Text style={{alignSelf: 'center'}}>OR</Text>
+              <View style={{alignItems: 'center', margin: 10}}>
+                <TextInput
+                  keyboardType={'email-address'}
+                  placeholder={'invite by Mail'}
+                  style={{borderWidth: 1, padding: 10, width: '70%'}}
+                  onSubmitEditing={(input) => {
+                    const memberMail = input.nativeEvent.text;
+                    console.log(memberMail);
+                    sendInvitaionMail(memberMail);
+                  }}
+                />
+              </View>
             </View>
           </View>
         </View>

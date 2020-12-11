@@ -17,6 +17,7 @@ target 'gymMembershipManagement' do
 
   pod 'RNSVG', :path => '../node_modules/react-native-svg'
 
+
   target 'gymMembershipManagementTests' do
     inherit! :complete
     # Pods for testing
