@@ -1,25 +1,22 @@
 import React, {useEffect, useState} from 'react';
-import {Text, View, FlatList, TextInput} from 'react-native';
-import {useSelector} from 'react-redux';
+import {Text, View, FlatList, TextInput, Button} from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
 import {uniqueid} from '../utility/uniqueid';
 
 export default function Home() {
   // CONST
 
-  var allMemebersStore = useSelector((state) => state.DataReducer);
-  const [allMembers, setallMembers] = useState(allMemebersStore.test);
+  var allMemebersStore = useSelector((state) => state.DataReducer.allMembers);
+  const [allMembers, setallMembers] = useState(allMemebersStore);
 
-  console.log(allMemebersStore.test);
-  //   const allMembers = [
-  //     {
-  //       id: 'AA01',
-  //       name: 'ilies',
-  //     },
-  //     {
-  //       id: 'AA02',
-  //       name: 'mohamed',
-  //     },
-  //   ];
+  useEffect(() => {
+    setallMembers(allMemebersStore);
+  }, [allMemebersStore]);
+
+  const dispatch = useDispatch();
+
+  const [memeberName, setmemeberName] = useState('');
+  const [memeberRegistritionDate, setmemeberRegistritionDate] = useState('');
 
   // FUNCTIONS
   function addNewMember(name) {
@@ -36,6 +33,13 @@ export default function Home() {
         };
         console.log('TO ADD ' + JSON.stringify(newMemeber));
 
+        dispatch({
+          type: 'addNewMember',
+          newMemeber: newMemeber,
+        });
+        // success :
+        setmemeberName('');
+
         break;
 
       default:
@@ -48,8 +52,15 @@ export default function Home() {
       <Text>All members</Text>
       <TextInput
         placeholder={'member name'}
-        onSubmitEditing={(input) => {
-          addNewMember(input.nativeEvent.text);
+        onChangeText={(inputName) => {
+          setmemeberName(inputName);
+        }}
+        value={memeberName}
+      />
+      <Button
+        title={'add'}
+        onPress={() => {
+          addNewMember(memeberName);
         }}
       />
       <FlatList

@@ -16,8 +16,8 @@ const initialState = {
 const DataReducer = (state = initialState, action) => {
   switch (action.type) {
     case 'addNewMember':
-      //   state.allMembers = action.refundList;
-
+      console.log('addNewMember');
+      state.allMembers = [...state.allMembers, action.newMemeber];
       return {
         allMembers: state.allMembers,
       };
