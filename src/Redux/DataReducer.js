@@ -1,16 +1,5 @@
 const initialState = {
-  allMembers: [
-    {
-      id: 'AA01',
-      name: 'ilies',
-    },
-    {
-      id: 'AA02',
-      name: 'mohamed',
-    },
-  ],
-
-  test: ' test ',
+  allMembers: [],
 };
 
 const DataReducer = (state = initialState, action) => {
