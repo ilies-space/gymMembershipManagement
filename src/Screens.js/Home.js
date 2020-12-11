@@ -20,7 +20,7 @@ export default function Home() {
 
   const [memeberName, setmemeberName] = useState('');
   const [memeberRegistritionDate, setmemeberRegistritionDate] = useState('');
-
+  const [memberShipDuration, setmemberShipDuration] = useState(30);
   // console.log(moment().format('Do MMMM YYYY, h:mm:ss a'));
   // console.log(moment('2020-12-11T10:11:21.583Z').fromNow());
 
@@ -40,7 +40,7 @@ export default function Home() {
           fullName: name,
           id: uniqueid(),
           dateOfRegistration: moment(),
-          endOfRegistration: moment().add(30, 'days'),
+          endOfRegistration: moment().add(memberShipDuration, 'days'),
         };
         console.log('TO ADD ' + JSON.stringify(newMemeber));
 
@@ -59,7 +59,7 @@ export default function Home() {
     }
   }
   return (
-    <View>
+    <View style={{}}>
       <Text>All members</Text>
       <TextInput
         placeholder={'member name'}
@@ -68,50 +68,63 @@ export default function Home() {
         }}
         value={memeberName}
       />
+      <Text>setmemberShipDuration / per days</Text>
+      <TextInput
+        placeholder={'member name'}
+        onChangeText={(input) => {
+          setmemberShipDuration(input);
+        }}
+        value={memberShipDuration.toString()}
+        keyboardType={'decimal-pad'}
+      />
+
       <Button
         title={'add'}
         onPress={() => {
           addNewMember(memeberName);
         }}
       />
-      <FlatList
-        data={allMembers}
-        keyExtractor={(item) => item.id}
-        renderItem={({item}) => {
-          return (
-            <View
-              style={{
-                backgroundColor: '#fef',
-                padding: 10,
-                borderBottomWidth: 1,
-              }}>
-              {console.log(moment(item.dateOfRegistration).fromNow())}
+      <View style={{height: 300}}>
+        <FlatList
+          style={{}}
+          data={allMembers}
+          keyExtractor={(item) => item.id}
+          renderItem={({item}) => {
+            return (
+              <View
+                style={{
+                  backgroundColor: '#fef',
+                  padding: 10,
+                  borderBottomWidth: 1,
+                }}>
+                {console.log(moment(item.dateOfRegistration).fromNow())}
 
-              <View style={{flexDirection: 'row'}}>
-                <View style={{flex: 1}}>
-                  <Text>FullNAme : {item.fullName} </Text>
-                  <Text>
-                    Registred day
-                    {JSON.stringify(
-                      moment(item.dateOfRegistration).format('DD MMMM YYYY'),
-                    )}
-                  </Text>
-                  <Text>
-                    End Date :
-                    {JSON.stringify(
-                      moment(item.endOfRegistration).format('DD MMMM YYYY'),
-                    )}
-                  </Text>
-                  <Text>
-                    Active since : {moment(item.dateOfRegistration).fromNow()}
-                  </Text>
+                <View style={{flexDirection: 'row'}}>
+                  <View style={{flex: 1}}>
+                    <Text>FullNAme : {item.fullName} </Text>
+                    <Text>
+                      Registred day
+                      {JSON.stringify(
+                        moment(item.dateOfRegistration).format('DD MMMM YYYY'),
+                      )}
+                    </Text>
+                    <Text>
+                      End Date :
+                      {JSON.stringify(
+                        moment(item.endOfRegistration).format('DD MMMM YYYY'),
+                      )}
+                    </Text>
+                    <Text>
+                      Active since : {moment(item.dateOfRegistration).fromNow()}
+                    </Text>
+                  </View>
+                  <View>{/* <Text>IMG GOES HERE</Text> */}</View>
                 </View>
-                <View>{/* <Text>IMG GOES HERE</Text> */}</View>
               </View>
-            </View>
-          );
-        }}
-      />
+            );
+          }}
+        />
+      </View>
     </View>
   );
 }
