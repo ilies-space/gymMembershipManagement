@@ -24,6 +24,9 @@ export default function Home() {
   // console.log(moment().format('Do MMMM YYYY, h:mm:ss a'));
   // console.log(moment('2020-12-11T10:11:21.583Z').fromNow());
 
+  // console.log(moment().add(30, 'days').calendar());
+  // console.log(moment().calendar());
+
   // FUNCTIONS
   function addNewMember(name) {
     // checkIfMebeAlreadyexist ?
@@ -37,6 +40,7 @@ export default function Home() {
           fullName: name,
           id: uniqueid(),
           dateOfRegistration: moment(),
+          endOfRegistration: moment().add(30, 'days'),
         };
         console.log('TO ADD ' + JSON.stringify(newMemeber));
 
@@ -75,15 +79,26 @@ export default function Home() {
         keyExtractor={(item) => item.id}
         renderItem={({item}) => {
           return (
-            <View style={{margin: 20, backgroundColor: '#fdd', padding: 20}}>
+            <View
+              style={{
+                backgroundColor: '#fef',
+                padding: 10,
+                borderBottomWidth: 1,
+              }}>
+              {console.log(moment(item.dateOfRegistration).fromNow())}
+
               <View style={{flexDirection: 'row'}}>
                 <View style={{flex: 1}}>
                   <Text>FullNAme : {item.fullName} </Text>
                   <Text>
                     Registred day {JSON.stringify(item.dateOfRegistration)}
                   </Text>
-                  <Text> End Date : </Text>
-                  <Text> Rimine : </Text>
+                  <Text>
+                    End Date : {JSON.stringify(item.endOfRegistration)}
+                  </Text>
+                  <Text>
+                    Active since : {moment(item.dateOfRegistration).fromNow()}
+                  </Text>
                 </View>
                 <View>{/* <Text>IMG GOES HERE</Text> */}</View>
               </View>
