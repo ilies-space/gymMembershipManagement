@@ -4,6 +4,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {uniqueid} from '../utility/uniqueid';
 import moment from 'moment';
 import DatePicker from 'react-native-date-picker';
+import {Picker} from '@react-native-picker/picker';
 
 export default function Home() {
   // CONST
@@ -22,6 +23,7 @@ export default function Home() {
   }, [allMemebersStore]);
 
   const dispatch = useDispatch();
+  const [memberShipPer, setmemberShipPer] = useState('days');
 
   const [memeberName, setmemeberName] = useState('');
   const [memeberRegistritionDate, setmemeberRegistritionDate] = useState('');
@@ -41,13 +43,20 @@ export default function Home() {
 
     switch (lookUp) {
       case undefined:
+        const memberShipDurationPerDAys =
+          memberShipPer === 'days'
+            ? memberShipDuration
+            : memberShipDuration * 30;
+
         const newMemeber = {
           fullName: name,
           id: uniqueid(),
           dateOfRegistration: personalizedDate ? date : moment(),
           endOfRegistration: personalizedDate
-            ? moment(date).add(memberShipDuration, 'days')
-            : moment().add(memberShipDuration, 'days'),
+            ? moment(date).add(memberShipDurationPerDAys, 'days')
+            : moment().add(memberShipDurationPerDAys, 'days'),
+          memberShipDuration: memberShipDuration,
+          memberShipPer: memberShipPer,
         };
         console.log('TO ADD ' + JSON.stringify(newMemeber));
 
@@ -75,15 +84,33 @@ export default function Home() {
         }}
         value={memeberName}
       />
-      <Text>setmemberShipDuration / per days</Text>
-      <TextInput
-        placeholder={'member name'}
-        onChangeText={(input) => {
-          setmemberShipDuration(input);
-        }}
-        value={memberShipDuration.toString()}
-        keyboardType={'decimal-pad'}
-      />
+      <Text>memberShip Duration / per days</Text>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+        }}>
+        <TextInput
+          placeholder={'member name'}
+          onChangeText={(input) => {
+            setmemberShipDuration(input);
+          }}
+          value={memberShipDuration.toString()}
+          keyboardType={'decimal-pad'}
+        />
+        <View style={{width: 120}}>
+          <Picker
+            mode={'dropdown'}
+            selectedValue={memberShipPer}
+            // style={{height: 50, width: 100}}
+            onValueChange={(itemValue, itemIndex) =>
+              setmemberShipPer(itemValue)
+            }>
+            <Picker.Item label="days" value="days" />
+            <Picker.Item label="months" value="months" />
+          </Picker>
+        </View>
+      </View>
 
       <View style={{alignItems: 'flex-end'}}>
         <Switch
@@ -98,7 +125,7 @@ export default function Home() {
       </View>
 
       {personalizedDate ? (
-        <DatePicker date={date} onDateChange={setDate} />
+        <DatePicker date={date} onDateChange={setDate} mode="date" />
       ) : (
         <Text>start day : {moment().format('DD/MMMM/YYYY')} </Text>
       )}
@@ -139,6 +166,10 @@ export default function Home() {
                     </Text>
                     <Text>
                       Active since : {moment(item.dateOfRegistration).fromNow()}
+                    </Text>
+                    <Text>
+                      memeberShip Duration : {item.memberShipDuration} ,{' '}
+                      {item.memberShipPer}
                     </Text>
                   </View>
                   <View>{/* <Text>IMG GOES HERE</Text> */}</View>
