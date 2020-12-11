@@ -1,11 +1,16 @@
 import React, {useEffect, useState} from 'react';
-import {Text, View, FlatList, TextInput, Button} from 'react-native';
+import {Text, View, FlatList, TextInput, Button, Switch} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {uniqueid} from '../utility/uniqueid';
 import moment from 'moment';
+import DatePicker from 'react-native-date-picker';
 
 export default function Home() {
   // CONST
+
+  const [date, setDate] = useState(new Date());
+
+  const [personalizedDate, setpersonalizedDate] = useState(false);
 
   const DateExmple = moment();
 
@@ -39,8 +44,10 @@ export default function Home() {
         const newMemeber = {
           fullName: name,
           id: uniqueid(),
-          dateOfRegistration: moment(),
-          endOfRegistration: moment().add(memberShipDuration, 'days'),
+          dateOfRegistration: personalizedDate ? date : moment(),
+          endOfRegistration: personalizedDate
+            ? moment(date).add(memberShipDuration, 'days')
+            : moment().add(memberShipDuration, 'days'),
         };
         console.log('TO ADD ' + JSON.stringify(newMemeber));
 
@@ -78,13 +85,31 @@ export default function Home() {
         keyboardType={'decimal-pad'}
       />
 
+      <View style={{alignItems: 'flex-end'}}>
+        <Switch
+          style={{height: 30}}
+          trackColor={{false: '#bdc3c7', true: '#bdc3c7'}}
+          thumbColor={personalizedDate ? '#2ed573' : '#ff3f34'}
+          ios_backgroundColor="#3e3e3e"
+          onValueChange={() => setpersonalizedDate(!personalizedDate)}
+          value={personalizedDate}
+        />
+        <Text>personalized date</Text>
+      </View>
+
+      {personalizedDate ? (
+        <DatePicker date={date} onDateChange={setDate} />
+      ) : (
+        <Text>start day : {moment().format('DD/MMMM/YYYY')} </Text>
+      )}
+
       <Button
         title={'add'}
         onPress={() => {
           addNewMember(memeberName);
         }}
       />
-      <View style={{height: 300}}>
+      <View style={{height: 200}}>
         <FlatList
           style={{}}
           data={allMembers}
@@ -97,8 +122,6 @@ export default function Home() {
                   padding: 10,
                   borderBottomWidth: 1,
                 }}>
-                {console.log(moment(item.dateOfRegistration).fromNow())}
-
                 <View style={{flexDirection: 'row'}}>
                   <View style={{flex: 1}}>
                     <Text>FullNAme : {item.fullName} </Text>
