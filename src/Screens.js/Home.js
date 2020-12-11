@@ -1,13 +1,31 @@
 import React, {useEffect, useState} from 'react';
-import {Text, View, FlatList, TextInput, Button, Switch} from 'react-native';
+import {
+  Text,
+  View,
+  FlatList,
+  TextInput,
+  Button,
+  Switch,
+  TouchableOpacity,
+  Image,
+} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {uniqueid} from '../utility/uniqueid';
 import moment from 'moment';
 import DatePicker from 'react-native-date-picker';
 import {Picker} from '@react-native-picker/picker';
+import ImagePicker, {launchCamera} from 'react-native-image-picker';
 
 export default function Home() {
   // CONST
+
+  const options = {
+    title: 'my pic app',
+    takePhotoButtonTitle: 'Take photo with your camera',
+    chooseFromLibraryButtonTitle: 'Choose photo from library',
+  };
+  const [avatarSource, setavatarSource] = useState(null);
+  const [pic, setpic] = useState(null);
 
   const [date, setDate] = useState(new Date());
 
@@ -50,6 +68,7 @@ export default function Home() {
 
         const newMemeber = {
           fullName: name,
+          memberPicture: avatarSource,
           id: uniqueid(),
           dateOfRegistration: personalizedDate ? date : moment(),
           endOfRegistration: personalizedDate
@@ -76,7 +95,33 @@ export default function Home() {
   }
   return (
     <View style={{}}>
-      <Text>All members</Text>
+      <Image
+        source={avatarSource}
+        style={{width: 50, height: 50, margin: 10}}
+      />
+      <Text>member info : </Text>
+      <TouchableOpacity
+        style={{backgroundColor: 'green', margin: 10, padding: 10}}
+        onPress={() => {
+          launchCamera(options, (response) => {
+            console.log('Response = ', response);
+            if (response.didCancel) {
+              console.log('User cancelled image picker');
+            } else if (response.error) {
+              console.log('Image Picker Error: ', response.error);
+            } else {
+              let source = {uri: response.uri};
+              // You can also display the image using data:
+              // let source = { uri: 'data:image/jpeg;base64,' + response.data };
+              setavatarSource(source);
+              setpic(response.data);
+            }
+          });
+
+          // launchCamera(options, callback);
+        }}>
+        <Text style={{color: '#fff'}}>Select Image</Text>
+      </TouchableOpacity>
       <TextInput
         placeholder={'member name'}
         onChangeText={(inputName) => {
@@ -172,7 +217,16 @@ export default function Home() {
                       {item.memberShipPer}
                     </Text>
                   </View>
-                  <View>{/* <Text>IMG GOES HERE</Text> */}</View>
+                  <View>
+                    {item.memberPicture ? (
+                      <Image
+                        source={item.memberPicture}
+                        style={{width: 50, height: 50, margin: 10}}
+                      />
+                    ) : (
+                      <Text>NO-IMG</Text>
+                    )}
+                  </View>
                 </View>
               </View>
             );
