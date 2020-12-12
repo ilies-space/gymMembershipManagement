@@ -13,3 +13,4 @@
 - [ ] notify user for membership exasperation
 - [ x ] Generate QRCODE To be scanned from the client Side APP
 - [ ] Statistique and report Screen
+- [ ] build client side app ( scan qrcode and get membership state ) 
