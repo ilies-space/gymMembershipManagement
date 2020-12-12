@@ -2,10 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {
   Text,
   View,
-  FlatList,
   TextInput,
-  Button,
-  Switch,
   TouchableOpacity,
   Image,
   Modal,
@@ -20,6 +17,7 @@ import QRCode from 'react-native-qrcode-svg';
 import RNSmtpMailer from 'react-native-smtp-mailer';
 import {mailInfo} from '../utility/smtpCredential';
 import {useNavigation} from '@react-navigation/native';
+import {ScrollView} from 'react-native-gesture-handler';
 
 export default function AddMember() {
   // CONST
@@ -36,82 +34,102 @@ export default function AddMember() {
     takePhotoButtonTitle: 'Take photo with your camera',
     chooseFromLibraryButtonTitle: 'Choose photo from library',
   };
-  const [avatarSource, setavatarSource] = useState(null);
-  const [pic, setpic] = useState(null);
+  const [avatarSource, setavatarSource] = useState(
+    require('../assets/profileimgplaceholder.png'),
+  );
 
   const [date, setDate] = useState(new Date());
 
   const [personalizedDate, setpersonalizedDate] = useState(false);
 
-  const DateExmple = moment();
-
   const dispatch = useDispatch();
   const [memberShipPer, setmemberShipPer] = useState('days');
 
   const [memeberName, setmemeberName] = useState('');
-  const [memeberRegistritionDate, setmemeberRegistritionDate] = useState('');
   const [memberShipDuration, setmemberShipDuration] = useState(30);
-  // console.log(moment().format('Do MMMM YYYY, h:mm:ss a'));
-  // console.log(moment('2020-12-11T10:11:21.583Z').fromNow());
 
-  // console.log(moment().add(30, 'days').calendar());
-  // console.log(moment().calendar());
-  const memberExmple = {
-    dateOfRegistration: '2020-12-11T19:15:57.271Z',
-    endOfRegistration: '2021-01-10T19:15:57.271Z',
-    fullName: 'mimo',
-    memberShipDuration: 30,
-    memberShipPer: 'days',
-  };
-  const [newMemeberQRcodeData, setnewMemeberQRcodeData] = useState(
-    memberExmple,
-  );
+  const [newMemeberQRcodeData, setnewMemeberQRcodeData] = useState('');
   const [qrCodeModal, setqrCodeModal] = useState(false);
   // FUNCTIONS
+
+  function closeForm() {
+    setqrCodeModal(false);
+    setmemeberName('');
+    setavatarSource(require('../assets/profileimgplaceholder.png'));
+    navigation.goBack();
+  }
   function addNewMember(name) {
-    // checkIfMebeAlreadyexist ?
-    const lookUp = allMembers.find((member) => {
-      return member.name === name;
-    });
+    // check if data is not empty
 
-    switch (lookUp) {
-      case undefined:
-        const memberShipDurationPerDAys =
-          memberShipPer === 'days'
-            ? memberShipDuration
-            : memberShipDuration * 30;
-
-        const newMemeber = {
-          fullName: name,
-          memberPicture: avatarSource,
-          id: uniqueid(),
-          dateOfRegistration: personalizedDate ? date : moment(),
-          endOfRegistration: personalizedDate
-            ? moment(date).add(memberShipDurationPerDAys, 'days')
-            : moment().add(memberShipDurationPerDAys, 'days'),
-          memberShipDuration: memberShipDuration,
-          memberShipPer: memberShipPer,
-        };
-        dispatch({
-          type: 'addNewMember',
-          newMemeber: newMemeber,
+    if (name === '') {
+      alert('pleas inter a valide name ! ');
+      return;
+    } else {
+      if (
+        memberShipDuration === '' ||
+        memberShipDuration === '0' ||
+        isNaN(memberShipDuration)
+      ) {
+        alert('pleas inter a valide Subscription duration ! ');
+        return;
+      } else {
+        const lookUp = allMembers.find((member) => {
+          return member.name === name;
         });
-        // // success :
-        setnewMemeberQRcodeData({
-          fullName: name,
-          dateOfRegistration: personalizedDate ? date : moment(),
-          endOfRegistration: personalizedDate
-            ? moment(date).add(memberShipDurationPerDAys, 'days')
-            : moment().add(memberShipDurationPerDAys, 'days'),
-        });
-        setqrCodeModal(true);
+        switch (lookUp) {
+          case undefined:
+            const memberShipDurationPerDAys =
+              memberShipPer === 'days'
+                ? memberShipDuration
+                : memberShipDuration * 30;
 
-        break;
+            const newMemeber = {
+              fullName: name,
+              memberPicture: avatarSource,
+              id: uniqueid(),
+              dateOfRegistration: date,
+              endOfRegistration: moment(date).add(
+                memberShipDurationPerDAys,
+                'days',
+              ),
+              memberShipDuration: memberShipDuration,
+              memberShipPer: memberShipPer,
+            };
+            dispatch({
+              type: 'addNewMember',
+              newMemeber: newMemeber,
+            });
+            setnewMemeberQRcodeData({
+              fullName: name,
+              dateOfRegistration: personalizedDate ? date : moment(),
+              endOfRegistration: personalizedDate
+                ? moment(date).add(memberShipDurationPerDAys, 'days')
+                : moment().add(memberShipDurationPerDAys, 'days'),
+            });
+            setqrCodeModal(true);
 
-      default:
-        alert('this member already exist');
-        break;
+            break;
+
+          default:
+            alert('this member already exist');
+            break;
+        }
+      }
     }
+  }
+
+  function uploadImage() {
+    launchCamera(options, (response) => {
+      console.log('Response = ', response);
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('Image Picker Error: ', response.error);
+      } else {
+        let source = {uri: response.uri};
+        setavatarSource(source);
+      }
+    });
   }
 
   function sendInvitaionMail(mail) {
@@ -139,8 +157,7 @@ export default function AddMember() {
       .then((success) => {
         if (success.status === 'SUCCESS') {
           console.log('mail was sent succesfully to : ' + mail);
-          setqrCodeModal(false);
-          setmemeberName('');
+          closeForm();
         }
       })
       .catch((err) => {
@@ -150,7 +167,12 @@ export default function AddMember() {
   }
 
   return (
-    <View style={{}}>
+    <ScrollView
+      style={{
+        paddingHorizontal: 10,
+        paddingTop: 25,
+        backgroundColor: '#F2F8FF',
+      }}>
       <Modal transparent visible={qrCodeModal}>
         <View
           style={{
@@ -158,7 +180,7 @@ export default function AddMember() {
             height: '100%',
             width: '100%',
             position: 'absolute',
-            opacity: 0.5,
+            opacity: 0.7,
           }}
         />
         <View
@@ -178,9 +200,7 @@ export default function AddMember() {
             <TouchableOpacity
               style={{alignSelf: 'flex-end'}}
               onPress={() => {
-                console.log('close');
-                setqrCodeModal(false);
-                setmemeberName('');
+                closeForm();
               }}>
               <Text style={{color: 'red'}}>CLOSE</Text>
             </TouchableOpacity>
@@ -209,93 +229,211 @@ export default function AddMember() {
           </View>
         </View>
       </Modal>
-      <Image
-        source={avatarSource}
-        style={{width: 50, height: 50, margin: 10}}
-      />
 
-      <Text>member info : </Text>
-      <TouchableOpacity
-        style={{backgroundColor: 'green', margin: 10, padding: 10}}
-        onPress={() => {
-          launchCamera(options, (response) => {
-            console.log('Response = ', response);
-            if (response.didCancel) {
-              console.log('User cancelled image picker');
-            } else if (response.error) {
-              console.log('Image Picker Error: ', response.error);
-            } else {
-              let source = {uri: response.uri};
-              // You can also display the image using data:
-              // let source = { uri: 'data:image/jpeg;base64,' + response.data };
-              setavatarSource(source);
-              setpic(response.data);
-            }
-          });
+      {/* image picker area  */}
+      <View>
+        <TouchableOpacity
+          onPress={() => {
+            uploadImage();
+          }}
+          style={{}}>
+          <Image
+            source={avatarSource}
+            style={{
+              width: 115,
+              height: 115,
+              alignSelf: 'center',
+              margin: 10,
+              borderRadius: 115 / 2,
+            }}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            uploadImage();
+          }}
+          style={{}}>
+          <Text
+            style={{
+              borderRadius: 20,
+              borderWidth: 0.7,
+              alignSelf: 'center',
+              paddingHorizontal: 60,
+              paddingVertical: 8,
+              borderColor: '#bdc3c7',
+              color: '#6785AC',
+              fontWeight: 'bold',
+              fontSize: 18,
+            }}>
+            Upload
+          </Text>
+        </TouchableOpacity>
+      </View>
 
-          // launchCamera(options, callback);
+      <Text
+        style={{
+          fontSize: 18,
+          marginVertical: 15,
+          color: '#041726',
         }}>
-        <Text style={{color: '#fff'}}>Select Image</Text>
-      </TouchableOpacity>
+        Full name <Text style={{color: '#6785AC'}}>*</Text>
+      </Text>
       <TextInput
-        placeholder={'member name'}
+        style={{
+          backgroundColor: 'white',
+          borderRadius: 15,
+          color: '#6785AC',
+          padding: 15,
+          fontSize: 18,
+        }}
+        placeholder={'eg . ilies ouldmenouer'}
         onChangeText={(inputName) => {
           setmemeberName(inputName);
         }}
         value={memeberName}
+        placeholderTextColor={'#bdc3c7'}
       />
-      <Text>memberShip Duration / per days</Text>
+
+      <Text
+        style={{
+          fontSize: 18,
+          marginVertical: 15,
+          color: '#041726',
+          fontSize: 16,
+          marginVertical: 15,
+        }}>
+        Start day
+      </Text>
+
+      <TouchableOpacity
+        onPress={() => {
+          setpersonalizedDate(!personalizedDate);
+        }}
+        style={{
+          backgroundColor: 'white',
+          borderRadius: 15,
+          padding: 15,
+          fontSize: 18,
+        }}>
+        <Text
+          style={{
+            fontSize: 16,
+            color: '#6785AC',
+          }}>
+          {moment(date).format('DD/MMMM/YYYY')}
+        </Text>
+      </TouchableOpacity>
+
+      <Modal transparent visible={personalizedDate}>
+        <View
+          style={{
+            backgroundColor: 'black',
+            height: '100%',
+            width: '100%',
+            position: 'absolute',
+            opacity: 0.7,
+          }}
+        />
+        <View
+          style={{
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '100%',
+            margin: 20,
+          }}>
+          <View
+            style={{
+              backgroundColor: 'white',
+              alignItems: 'center',
+              padding: 20,
+              borderRadius: 25,
+            }}>
+            <DatePicker date={date} onDateChange={setDate} mode="date" />
+
+            <TouchableOpacity
+              style={{
+                paddingHorizontal: 30,
+                paddingVertical: 10,
+                borderRadius: 15,
+                marginTop: 30,
+                borderWidth: 0.5,
+                borderColor: 'grey',
+              }}
+              onPress={() => {
+                setpersonalizedDate(false);
+              }}>
+              <Text style={{color: 'green'}}>SAVE</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      <Text
+        style={{
+          fontSize: 18,
+          marginVertical: 15,
+          color: '#041726',
+          fontSize: 16,
+          marginVertical: 15,
+        }}>
+        Subscription duration
+      </Text>
+
       <View
         style={{
           flexDirection: 'row',
           alignItems: 'center',
         }}>
         <TextInput
-          placeholder={'member name'}
+          style={{
+            backgroundColor: 'white',
+            borderRadius: 20,
+            alignItems: 'center',
+            textAlign: 'center',
+            fontSize: 16,
+            width: 120,
+            color: '#6785AC',
+          }}
+          placeholder={'00'}
           onChangeText={(input) => {
             setmemberShipDuration(input);
           }}
           value={memberShipDuration.toString()}
           keyboardType={'decimal-pad'}
+          placeholderTextColor={'#bdc3c7'}
         />
         <View style={{width: 120}}>
           <Picker
+            dropdownIconColor={'#6785AC'}
             mode={'dropdown'}
             selectedValue={memberShipPer}
-            // style={{height: 50, width: 100}}
-            onValueChange={(itemValue, itemIndex) =>
-              setmemberShipPer(itemValue)
-            }>
-            <Picker.Item label="days" value="days" />
-            <Picker.Item label="months" value="months" />
+            onValueChange={(itemValue) => setmemberShipPer(itemValue)}>
+            <Picker.Item color={'#6785AC'} label="days" value="days" />
+            <Picker.Item color={'#6785AC'} label="months" value="months" />
           </Picker>
         </View>
       </View>
 
-      <View style={{alignItems: 'flex-end'}}>
-        <Switch
-          style={{height: 30}}
-          trackColor={{false: '#bdc3c7', true: '#bdc3c7'}}
-          thumbColor={personalizedDate ? '#2ed573' : '#ff3f34'}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={() => setpersonalizedDate(!personalizedDate)}
-          value={personalizedDate}
-        />
-        <Text>personalized date</Text>
-      </View>
-
-      {personalizedDate ? (
-        <DatePicker date={date} onDateChange={setDate} mode="date" />
-      ) : (
-        <Text>start day : {moment().format('DD/MMMM/YYYY')} </Text>
-      )}
-
-      <Button
-        title={'add'}
+      <TouchableOpacity
         onPress={() => {
           addNewMember(memeberName);
         }}
-      />
-    </View>
+        style={{
+          backgroundColor: '#6785AC',
+          alignItems: 'center',
+          borderRadius: 15,
+          marginVertical: 30,
+        }}>
+        <Text
+          style={{
+            padding: 15,
+            color: 'white',
+            fontSize: 18,
+            fontWeight: 'bold',
+          }}>
+          Confirme
+        </Text>
+      </TouchableOpacity>
+    </ScrollView>
   );
 }

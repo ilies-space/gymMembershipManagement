@@ -12,7 +12,13 @@ export default function MainNavigation() {
     <Stack.Navigator>
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="ViewMembers" component={ViewMembers} />
-      <Stack.Screen name="AddMember" component={AddMember} />
+      <Stack.Screen
+        name="AddMember"
+        component={AddMember}
+        options={{
+          headerShown: false,
+        }}
+      />
     </Stack.Navigator>
   );
 }
