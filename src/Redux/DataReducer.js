@@ -6,7 +6,9 @@ const DataReducer = (state = initialState, action) => {
   switch (action.type) {
     case 'addNewMember':
       console.log('addNewMember');
-      state.allMembers = [...state.allMembers, action.newMemeber];
+      state.allMembers = state.allMembers
+        ? [...state.allMembers, action.newMemeber]
+        : action.newMemeber;
       return {
         allMembers: state.allMembers,
       };
