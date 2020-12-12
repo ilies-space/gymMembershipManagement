@@ -11,4 +11,5 @@
 - [ ] build responsive & better UI
 - [ ] send mail to new member
 - [ ] notify user for membership exasperation
-- [ ] Generate QRCODE To be scanned from the client Side APP
+- [ x ] Generate QRCODE To be scanned from the client Side APP
+- [ ] Statistique and report Screen
