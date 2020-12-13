@@ -3,7 +3,10 @@ import React, {useEffect, useState} from 'react';
 import {Button, Text, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import moment from 'moment';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import {
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+} from 'react-native-gesture-handler';
 
 export default function Home() {
   useEffect(() => {
@@ -52,7 +55,11 @@ export default function Home() {
             justifyContent: 'space-around',
             height: 200,
           }}>
-          <View style={{alignItems: 'center', justifyContent: 'center'}}>
+          <View
+            style={{
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
             <Text style={{fontSize: 25}}>
               {allMemebersStore.length
                 ? allMemebersStore.length - expiredMembers
@@ -61,12 +68,27 @@ export default function Home() {
             <Text>Active</Text>
           </View>
 
-          <View style={{alignItems: 'center', justifyContent: 'center'}}>
-            <Text style={{fontSize: 30}}>
-              {allMemebersStore.length ? allMemebersStore.length : 0}{' '}
-            </Text>
-            <Text>Total</Text>
-          </View>
+          <TouchableWithoutFeedback
+            style={{}}
+            onPress={() => {
+              navigation.push('ViewMembers');
+            }}>
+            <View
+              style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: 150,
+                width: 150,
+                borderRadius: 150 / 2,
+                borderWidth: 5,
+                borderColor: '#52A8FB',
+              }}>
+              <Text style={{fontSize: 50, marginLeft: 10}}>
+                {allMemebersStore.length ? allMemebersStore.length : 0}{' '}
+              </Text>
+              <Text style={{fontSize: 26, color: 'grey'}}>Total</Text>
+            </View>
+          </TouchableWithoutFeedback>
 
           <View style={{alignItems: 'center', justifyContent: 'center'}}>
             <View>
@@ -78,13 +100,6 @@ export default function Home() {
           </View>
         </View>
 
-        <Button
-          onPress={() => {
-            console.log('push');
-            navigation.push('ViewMembers');
-          }}
-          title={'view all members'}
-        />
         <View style={{marginVertical: 15}} />
         <Button
           onPress={() => {
