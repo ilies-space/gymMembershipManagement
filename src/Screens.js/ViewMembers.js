@@ -12,6 +12,15 @@ export default function ViewMembers() {
     setallMembers(allMemebersStore);
   }, [allMemebersStore]);
 
+  function isExpired(endDate) {
+    const diff = moment.duration(moment().diff(endDate)).asDays();
+    return diff < 0;
+  }
+
+  function calculatediff(endDate) {
+    const diff = moment.duration(moment().diff(endDate)).asDays();
+    return parseInt(diff);
+  }
   return (
     <View>
       <FlatList
@@ -41,11 +50,16 @@ export default function ViewMembers() {
                       moment(item.endOfRegistration).format('DD MMMM YYYY'),
                     )}
                   </Text>
+                  {!isExpired(item.endOfRegistration) ? (
+                    <View />
+                  ) : (
+                    <Text>
+                      Remining :{calculatediff(item.endOfRegistration)}
+                    </Text>
+                  )}
+
                   <Text>
-                    Active since : {moment(item.dateOfRegistration).fromNow()}
-                  </Text>
-                  <Text>
-                    memeberShip Duration : {item.memberShipDuration} ,{' '}
+                    memeberShip Duration : {item.memberShipDuration} ,
                     {item.memberShipPer}
                   </Text>
                 </View>
@@ -60,6 +74,14 @@ export default function ViewMembers() {
                   )}
                 </View>
               </View>
+              <Text>
+                is expired :
+                {isExpired(item.endOfRegistration) ? (
+                  <Text style={{color: 'green'}}>active</Text>
+                ) : (
+                  <Text style={{color: 'red'}}>expired</Text>
+                )}
+              </Text>
             </View>
           );
         }}
