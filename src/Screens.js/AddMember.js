@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Image,
   Modal,
+  Alert,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {uniqueid} from '../utility/uniqueid';
@@ -106,7 +107,21 @@ export default function AddMember() {
                 ? moment(date).add(memberShipDurationPerDAys, 'days')
                 : moment().add(memberShipDurationPerDAys, 'days'),
             });
-            setqrCodeModal(true);
+
+            Alert.alert('alert', 'chosse an action from these options', [
+              {
+                text: 'display invitation modal',
+                onPress: () => {
+                  setqrCodeModal(true);
+                },
+              },
+              {
+                text: 'return to home',
+                onPress: () => {
+                  closeForm();
+                },
+              },
+            ]);
 
             break;
 
@@ -230,6 +245,12 @@ export default function AddMember() {
         </View>
       </Modal>
 
+      <TouchableOpacity
+        onPress={() => {
+          navigation.goBack();
+        }}>
+        <Text style={{color: 'blue'}}>Return</Text>
+      </TouchableOpacity>
       {/* image picker area  */}
       <View>
         <TouchableOpacity
