@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, Image} from 'react-native';
-import {FlatList} from 'react-native-gesture-handler';
+import {FlatList, TouchableOpacity} from 'react-native-gesture-handler';
 import {useSelector} from 'react-redux';
 import moment from 'moment';
 
@@ -23,66 +23,137 @@ export default function ViewMembers() {
   }
   return (
     <View>
+      {/* remplace this with tabNavigation  */}
+      <View style={{flexDirection: 'row', borderBottomWidth: 0.5}}>
+        <Text
+          style={{
+            flex: 1,
+            textAlign: 'center',
+            padding: 10,
+            backgroundColor: 'grey',
+          }}>
+          ALL
+        </Text>
+        <Text style={{flex: 1, textAlign: 'center', padding: 10}}>ACTIVE</Text>
+        <Text style={{flex: 1, textAlign: 'center', padding: 10}}>Expierd</Text>
+      </View>
       <FlatList
         style={{}}
         data={allMembers}
         keyExtractor={(item) => item.id}
         renderItem={({item}) => {
-          return (
-            <View
-              style={{
-                backgroundColor: '#fef',
-                padding: 10,
-                borderBottomWidth: 1,
-              }}>
-              <View style={{flexDirection: 'row'}}>
-                <View style={{flex: 1}}>
-                  <Text>FullNAme : {item.fullName} </Text>
-                  <Text>
-                    Registred day
-                    {JSON.stringify(
-                      moment(item.dateOfRegistration).format('DD MMMM YYYY'),
-                    )}
-                  </Text>
-                  <Text>
-                    End Date :
-                    {JSON.stringify(
-                      moment(item.endOfRegistration).format('DD MMMM YYYY'),
-                    )}
-                  </Text>
-                  {!isExpired(item.endOfRegistration) ? (
-                    <View />
-                  ) : (
-                    <Text>
-                      Remining :{calculatediff(item.endOfRegistration)}
-                    </Text>
-                  )}
+          function displayMember() {
+            const selectedMemeberDetails = {
+              fullName: item.fullName,
+              memberPicture: item.memberPicture,
+              registredDay: moment(item.dateOfRegistration).format(
+                'DD MMMM YYYY',
+              ),
+              EndDate: moment(item.endOfRegistration).format('DD MMMM YYYY'),
 
-                  <Text>
-                    memeberShip Duration : {item.memberShipDuration} ,
-                    {item.memberShipPer}
-                  </Text>
+              memeberShipDuration:
+                item.memberShipDuration + ',' + item.memberShipPer,
+
+              isActive: isExpired(item.endOfRegistration),
+            };
+
+            alert(JSON.stringify(selectedMemeberDetails));
+          }
+
+          return (
+            <TouchableOpacity
+              onPress={() => {
+                displayMember();
+              }}
+              style={{
+                flexDirection: 'row',
+                borderBottomWidth: 0.5,
+                paddingVertical: 2,
+                padding: 5,
+                marginVertical: 5,
+              }}>
+              {/* <View style={{flexDirection: 'row'}}>
+                <View style={{flex: 1}}>
+                  <Text style={{fontWeight: 'bold'}}>{item.fullName} </Text>
+
+                 
                 </View>
                 <View>
                   {item.memberPicture ? (
                     <Image
                       source={item.memberPicture}
-                      style={{width: 50, height: 50, margin: 10}}
+                      style={{
+                        width: 70,
+                        height: 70,
+                        margin: 10,
+                        borderRadius: 70 / 2,
+                      }}
                     />
                   ) : (
                     <Text>NO-IMG</Text>
                   )}
                 </View>
-              </View>
-              <Text>
-                is expired :
-                {isExpired(item.endOfRegistration) ? (
-                  <Text style={{color: 'green'}}>active</Text>
+              </View> */}
+
+              <View style={{flex: 1, justifyContent: 'center'}}>
+                <View style={{}}>
+                  <Text style={{fontWeight: 'bold', fontSize: 18}}>
+                    {item.fullName}
+                  </Text>
+                </View>
+
+                {!isExpired(item.endOfRegistration) ? (
+                  <Text style={{fontSize: 16, color: 'grey'}}>
+                    00 days left
+                  </Text>
                 ) : (
-                  <Text style={{color: 'red'}}>expired</Text>
+                  <Text style={{fontSize: 16, color: 'grey'}}>
+                    {calculatediff(item.endOfRegistration)} days left
+                  </Text>
                 )}
-              </Text>
-            </View>
+              </View>
+
+              <View>
+                {item.memberPicture ? (
+                  <View>
+                    <Image
+                      source={item.memberPicture}
+                      style={{
+                        width: 70,
+                        height: 70,
+                        margin: 10,
+                        borderRadius: 70 / 2,
+                      }}
+                    />
+                    {isExpired(item.endOfRegistration) ? (
+                      <View
+                        style={{
+                          backgroundColor: 'green',
+                          position: 'absolute',
+                          top: 10,
+                          right: 10,
+                          width: 20,
+                          height: 20,
+                          borderRadius: 20,
+                        }}></View>
+                    ) : (
+                      <View
+                        style={{
+                          backgroundColor: 'red',
+                          position: 'absolute',
+                          top: 10,
+                          right: 10,
+                          width: 20,
+                          height: 20,
+                          borderRadius: 20,
+                        }}></View>
+                    )}
+                  </View>
+                ) : (
+                  <Text>NO-IMG</Text>
+                )}
+              </View>
+            </TouchableOpacity>
           );
         }}
       />
