@@ -8,6 +8,7 @@ import Settings from './Settings';
 
 import AddMember from './AddMember';
 import ViewMembersNavigation from './ViewMembersNavigation';
+import ArchiviedMembers from './ArchiviedMembers';
 
 export default function MainNavigation() {
   const Drawer = createDrawerNavigator();
@@ -16,6 +17,7 @@ export default function MainNavigation() {
     <Drawer.Navigator initialRouteName="Home">
       <Drawer.Screen name="Home" component={StackNav} />
       <Drawer.Screen name="Settings" component={Settings} />
+      <Drawer.Screen name="ArchiviedMembers" component={ArchiviedMembers} />
     </Drawer.Navigator>
   );
 }

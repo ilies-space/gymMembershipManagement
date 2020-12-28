@@ -1,5 +1,6 @@
 const initialState = {
   allMembers: [],
+  archiviedMembers: [],
 };
 
 const DataReducer = (state = initialState, action) => {
@@ -11,6 +12,23 @@ const DataReducer = (state = initialState, action) => {
         : action.newMemeber;
       return {
         allMembers: state.allMembers,
+        archiviedMembers: state.archiviedMembers,
+      };
+
+    case 'addNewMemberToArchive':
+      console.log('addNewMemberToArchive');
+      state.archiviedMembers = [action.newMemeber, ...state.archiviedMembers];
+
+      // delete from old list
+      let lookup = state.allMembers.find(
+        (element) => element === action.newMemeber,
+      );
+
+      state.allMembers = state.allMembers.filter((item) => item !== lookup);
+
+      return {
+        allMembers: state.allMembers,
+        archiviedMembers: state.archiviedMembers,
       };
 
     default:

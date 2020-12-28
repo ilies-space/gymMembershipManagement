@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, Image, Alert} from 'react-native';
+import {View, Text, Image} from 'react-native';
 import {
   FlatList,
   TextInput,
@@ -8,7 +8,7 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 import moment from 'moment';
 
-export default function ViewMembers() {
+export default function ArchiviedMembers() {
   const dispatch = useDispatch();
 
   var allMemebersStore = useSelector((state) => state.DataReducer.allMembers);
@@ -16,13 +16,13 @@ export default function ViewMembers() {
     (state) => state.DataReducer.archiviedMembers,
   );
   console.log(ArchiviedMemebersStore);
-  const [allMembers, setallMembers] = useState(allMemebersStore);
+  const [allMembers, setallMembers] = useState(ArchiviedMemebersStore);
 
   const [filtredList, setfiltredList] = useState(allMemebersStore);
 
   useEffect(() => {
-    setallMembers(allMemebersStore);
-  }, [allMemebersStore]);
+    setallMembers(ArchiviedMemebersStore);
+  }, [ArchiviedMemebersStore]);
 
   function isExpired(endDate) {
     const diff = moment.duration(moment().diff(endDate)).asDays();
@@ -36,7 +36,7 @@ export default function ViewMembers() {
 
   function filterList(name) {
     name = name.toLowerCase();
-    let filtredList = allMemebersStore.filter(function (element) {
+    let filtredList = ArchiviedMemebersStore.filter(function (element) {
       let ElementsName = element.fullName.toLocaleLowerCase();
       return ElementsName.includes(name);
     });
@@ -74,7 +74,7 @@ export default function ViewMembers() {
             justifyContent: 'center',
             backgroundColor: 'red',
           }}>
-          <Text>No member signed with this name</Text>
+          <Text>No member signed with this name in archive list</Text>
         </View>
       ) : (
         <FlatList
@@ -98,21 +98,6 @@ export default function ViewMembers() {
               };
 
               // alert(JSON.stringify(selectedMemeberDetails));
-
-              Alert.alert('alert', 'preformAction', [
-                {
-                  text: 'archive ' + item.fullName,
-                  onPress: () => {
-                    dispatch({
-                      type: 'addNewMemberToArchive',
-                      newMemeber: item,
-                    });
-                  },
-                },
-                {
-                  text: 'cancel',
-                },
-              ]);
             }
 
             return (
