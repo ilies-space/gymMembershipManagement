@@ -7,7 +7,7 @@ const DataReducer = (state = initialState, action) => {
     case 'addNewMember':
       console.log('addNewMember');
       state.allMembers = state.allMembers
-        ? [...state.allMembers, action.newMemeber]
+        ? [action.newMemeber, ...state.allMembers]
         : action.newMemeber;
       return {
         allMembers: state.allMembers,

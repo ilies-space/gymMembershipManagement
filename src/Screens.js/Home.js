@@ -107,6 +107,13 @@ export default function Home() {
           }}
           title={'Add new member'}
         />
+        <View style={{marginVertical: 10}} />
+        <Button
+          onPress={() => {
+            navigation.push('AddMember');
+          }}
+          title={'check member'}
+        />
       </View>
     </View>
   );

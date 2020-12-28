@@ -7,6 +7,7 @@ import {createDrawerNavigator} from '@react-navigation/drawer';
 import Settings from './Settings';
 
 import AddMember from './AddMember';
+import ViewMembersNavigation from './ViewMembersNavigation';
 
 export default function MainNavigation() {
   const Drawer = createDrawerNavigator();
@@ -33,7 +34,7 @@ const StackNav = () => {
       />
       <Stack.Screen
         name="ViewMembers"
-        component={ViewMembers}
+        component={ViewMembersNavigation}
         options={{
           headerShown: false,
         }}
