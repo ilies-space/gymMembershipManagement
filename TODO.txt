@@ -3,3 +3,6 @@
 
 
 * presentation file []
+
+
+* Update everday notification area (check for expired memebership , that will be done in background) []

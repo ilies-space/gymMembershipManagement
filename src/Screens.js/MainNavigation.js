@@ -9,6 +9,7 @@ import Settings from './Settings';
 import AddMember from './AddMember';
 import ViewMembersNavigation from './ViewMembersNavigation';
 import ArchiviedMembers from './ArchiviedMembers';
+import Notifications from './Notifications';
 
 export default function MainNavigation() {
   const Drawer = createDrawerNavigator();
@@ -18,6 +19,7 @@ export default function MainNavigation() {
       <Drawer.Screen name="Home" component={StackNav} />
       <Drawer.Screen name="Settings" component={Settings} />
       <Drawer.Screen name="ArchiviedMembers" component={ArchiviedMembers} />
+      <Drawer.Screen name="Notifications" component={Notifications} />
     </Drawer.Navigator>
   );
 }
@@ -48,6 +50,8 @@ const StackNav = () => {
           headerShown: false,
         }}
       />
+
+      <Stack.Screen name="Notifications" component={Notifications} />
     </Stack.Navigator>
   );
 };

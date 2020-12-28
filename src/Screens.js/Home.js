@@ -92,17 +92,23 @@ export default function Home() {
             flex: 1,
           }}
         />
-        <View
-          style={{
-            alignItems: 'center',
-            height: 30,
-            width: 30,
-            backgroundColor: 'red',
-            justifyContent: 'center',
-            margin: 10,
+
+        <TouchableOpacity
+          onPress={() => {
+            navigation.push('Notifications');
           }}>
-          <Text style={{color: 'white'}}>0</Text>
-        </View>
+          <View
+            style={{
+              alignItems: 'center',
+              height: 30,
+              width: 30,
+              backgroundColor: 'red',
+              justifyContent: 'center',
+              margin: 10,
+            }}>
+            <Text style={{color: 'white'}}>0</Text>
+          </View>
+        </TouchableOpacity>
       </View>
 
       <ScrollView style={{flex: 1, backgroundColor: '#000'}}>
