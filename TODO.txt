@@ -1,0 +1,5 @@
+* implement Bottom Navigation []
+* implement Lottie animations []
+
+
+* presentation file []
