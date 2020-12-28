@@ -9,11 +9,15 @@ import {
 } from 'react-native-gesture-handler';
 
 export default function Home() {
+  var allMemebersStore = useSelector((state) => state.DataReducer.allMembers);
+
   useEffect(() => {
     calculateExpiredMembers();
-  }, []);
+  }, [allMemebersStore]);
 
-  var allMemebersStore = useSelector((state) => state.DataReducer.allMembers);
+  var ArchiviedMemebersStore = useSelector(
+    (state) => state.DataReducer.archiviedMembers,
+  );
 
   function isExpired(endDate) {
     const diff = moment.duration(moment().diff(endDate)).asDays();
@@ -26,7 +30,6 @@ export default function Home() {
       console.log('empty list');
     } else {
       var counter = 0;
-      // must find 5 :
 
       allMemebersStore.forEach((member) => {
         if (!isExpired(member.endOfRegistration)) counter++;
@@ -95,12 +98,17 @@ export default function Home() {
               <Text style={{color: 'black', fontSize: 25}}>
                 {expiredMembers}
               </Text>
+
               <Text style={{color: 'black'}}>Expired</Text>
             </View>
           </View>
         </View>
+        <View style={{marginVertical: 15}} />
+
+        <Text>ArchiviedMemebersStore : {ArchiviedMemebersStore.length}</Text>
 
         <View style={{marginVertical: 15}} />
+
         <Button
           onPress={() => {
             navigation.push('AddMember');

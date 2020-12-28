@@ -43,7 +43,7 @@ export default function ViewMembers() {
     setallMembers(filtredList);
   }
   return (
-    <View style={{flex: 1}}>
+    <View style={{flex: 1, backgroundColor: 'white'}}>
       {/* remplace this with tabNavigation  */}
       {/* <View style={{flexDirection: 'row', borderBottomWidth: 0.5}}>
         <Text
@@ -60,6 +60,13 @@ export default function ViewMembers() {
       </View> */}
 
       <TextInput
+        style={{
+          padding: 10,
+          borderWidth: 0.5,
+          borderColor: 'grey',
+          marginHorizontal: 20,
+          marginTop: 10,
+        }}
         placeholder={'search by name'}
         onChangeText={(v) => {
           filterList(v);
@@ -78,7 +85,12 @@ export default function ViewMembers() {
         </View>
       ) : (
         <FlatList
-          style={{}}
+          style={{
+            margin: 20,
+            borderRadius: 20,
+            backgroundColor: '#ecf0f1',
+            paddingHorizontal: 10,
+          }}
           data={allMembers}
           keyExtractor={(item) => item.id}
           renderItem={({item}) => {
